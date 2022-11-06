@@ -1,0 +1,8 @@
+version: "2.1"
+services:
+  app:
+    build: .
+    command: sh -c "cd ${PWD} && export $$(xargs < .env) && npm install && npm run deploy-bootstrap && npm run deploy-backend && npm run deploy-frontend && npm run watch"
+    volumes:
+      - "./:/${PWD}"
+      - "/var/run/docker.sock:/var/run/docker.sock"

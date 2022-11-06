@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script>
+
+        window.onload = function() {
+
+            fetch('/cdk-outputs.json').then(e => e.json()).then(e => {
+                const googleClientId = e["AppStack"]["googleClientId"];
+                google.accounts.id.initialize({
+                    client_id: googleClientId,
+                    ux_mode: 'redirect',
+                    login_uri: `https://${e["AppStack"]["apiUrl"]}/login`,
+                    state_cookie_domain: window.location.host,
+
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById("signIn"),
+                    {
+                        theme: "outline",
+                        size: "large",
+                        shape: "pill",
+                    }
+                );
+            });
+        }
+
+        function queryApiSecure() {
+            fetch('/cdk-outputs.json').then(e => e.json()).then(e => {
+                const apiUrl = e['AppStack']['apiUrl'];
+                fetch(`https://${apiUrl}/hello`, { credentials: 'include' }).then(r => r.json()).then(r => console.log(r))
+            })
+        }
+
+        function queryApiInsecure() {
+            fetch('/cdk-outputs.json').then(e => e.json()).then(e => {
+                const apiUrl = e['AppStack']['apiUrl'];
+                fetch(`https://${apiUrl}/hello`).then(r => r.json()).then(r => console.log(r))
+            })
+        }
+
+        </script>
+        <title>
+            Test
+        </title>
+    </head>
+    <body>
+        <div id="signIn"></div> 
+        <div onclick="queryApiSecure()">Click me to connect to API with Authorizer</div>
+        <div onclick="queryApiInsecure()">Click me to connect to API without Authorizer</div>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  id              Int       @default(autoincrement()) @id
+  email           String    @unique
+  sessionId       String?   @unique
+  name            String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt @default(now())
+  role            Role      @default(USER)
+
+  @@index([sessionId])
+}
+
+enum Role {
+  ADMIN
+  USER
+  INACTIVE
+}

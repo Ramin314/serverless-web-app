@@ -1,0 +1,45 @@
+<form enctype="multipart/form-data" id="uploadForm">
+    <label for="file">File:</label>
+    <input type="file" name="file" required /> <br />
+    <input type="submit" name="submit" value="Upload to Amazon S3" />
+</form>
+  
+<script>
+    const uploadForm = document.getElementById('uploadForm')
+
+    let apiUrl = null;
+
+    fetch('/cdk-outputs.json').then(e => e.json()).then(e => {
+        apiUrl = e["AppStack"]["apiUrl"];  
+    });
+
+    uploadForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const file = event.target.elements.file.files[0];
+        const presignedPost = await requestPresignedPost(file);
+        const uploadedFileUrl = await uploadFile(file, presignedPost);
+    });
+
+    async function requestPresignedPost(file) {
+        const userId = 1;
+        const res = await fetch(`${apiUrl}/get-presigned-url-s3?userId=${userId}`);
+        return res.json();
+    }
+
+    async function uploadFile(file, presignedPost) {
+        const formData = new FormData();
+        formData.append("Content-Type", file.type);
+        Object.entries(presignedPost.fields).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        formData.append("file", file);
+
+        const res = await fetch(presignedPost.url, {
+            method: "POST",
+            body: formData,
+        });
+
+        const location = res.headers.get("Location");
+        return decodeURIComponent(location);
+    }
+</script>

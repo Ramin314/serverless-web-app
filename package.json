@@ -1,0 +1,57 @@
+{
+  "name": "app",
+  "main": "bin/app.js",
+  "type": "module",
+  "version": "0.1.0",
+  "bin": {
+    "app": "bin/app.js"
+  },
+  "watch": {
+    "deploy-backend": {
+      "patterns": [
+        "bin",
+        "lib",
+        "functions"
+      ],
+      "extensions": "js",
+      "runOnChangeOnly": true
+    },
+    "deploy-frontend": {
+      "patterns": [
+        "frontend"
+      ],
+      "extensions": "html,css,js,json",
+      "runOnChangeOnly": true
+    }
+  },
+  "scripts": {
+    "cdk": "cdk",
+    "test": "jest",
+    "lint": "eslint --ignore-path .gitignore . --fix",
+    "deploy-bootstrap": "python3 deploy.py --a bootstrap",
+    "deploy-backend": "python3 deploy.py --a backend",
+    "deploy-frontend": "python3 deploy.py --a frontend",
+    "watch": "npm-watch",
+    "neo4j-push": "node neo4j/schema.js"
+  },
+  "devDependencies": {
+    "aws-cdk": "2.20.0",
+    "eslint": "^8.13.0",
+    "eslint-config-google": "^0.14.0",
+    "jest": "^26.4.2",
+    "npm-watch": "^0.11.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.2.1",
+    "aws-cdk-lib": "2.20.0",
+    "aws-sdk": "^2.1116.0",
+    "constructs": "^10.0.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "google-auth-library": "^8.1.1",
+    "neo4j-driver": "^5.2.0",
+    "node-fetch": "^3.2.4",
+    "prisma": "^4.2.1",
+    "serverless-mysql": "^1.5.4"
+  }
+}
